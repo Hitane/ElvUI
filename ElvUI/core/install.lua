@@ -10,11 +10,14 @@ local function SetupChat()
 	FCF_SetLocked(ChatFrame1, 1)
 	FCF_DockFrame(ChatFrame2)
 	FCF_SetLocked(ChatFrame2, 1)
+	FCF_OpenNewWindow(GENERAL)
+	FCF_SetLocked(ChatFrame3, 1)
+	FCF_DockFrame(ChatFrame3)
 
 	FCF_OpenNewWindow(LOOT)
-	FCF_UnDockFrame(ChatFrame3)
-	FCF_SetLocked(ChatFrame3, 1)
-	ChatFrame3:Show()			
+	FCF_UnDockFrame(ChatFrame4)
+	FCF_SetLocked(ChatFrame4, 1)
+	ChatFrame4:Show()			
 			
 	for i = 1, NUM_CHAT_WINDOWS do
 		local frame = _G[format("ChatFrame%s", i)]
@@ -25,7 +28,7 @@ local function SetupChat()
 		if i == 1 then
 			frame:ClearAllPoints()
 			frame:Point("BOTTOMLEFT", LeftChatToggleButton, "TOPLEFT", 1, 3)			
-		elseif i == 3 then
+		elseif i == 4 then
 			frame:ClearAllPoints()
 			frame:Point("BOTTOMLEFT", RightChatDataPanel, "TOPLEFT", 1, 3)
 		end
@@ -36,17 +39,21 @@ local function SetupChat()
 		-- set default Elvui font size
 		FCF_SetChatWindowFontSize(nil, frame, 12)
 		
-		-- rename windows general because moved to chat #3
+		-- rename windows general because moved to chat #4
 		if i == 1 then
-			FCF_SetWindowName(frame, GENERAL)
+			FCF_SetWindowName(frame, "G, S & W")
 		elseif i == 2 then
 			FCF_SetWindowName(frame, GUILD_EVENT_LOG)
-		elseif i == 3 then 
-			FCF_SetWindowName(frame, LOOT.." / "..TRADE) 
+		elseif i == 3 then
+			FCF_SetWindowName(frame, GENERAL)
+		elseif i == 4 then 
+			FCF_SetWindowName(frame, LOOT) 
 		end
 	end
 	
 	ChatFrame_RemoveAllMessageGroups(ChatFrame1)
+	ChatFrame_RemoveChannel(ChatFrame1, GENERAL)
+	ChatFrame_RemoveChannel(ChatFrame1, L['Trade'])
 	ChatFrame_AddMessageGroup(ChatFrame1, "SAY")
 	ChatFrame_AddMessageGroup(ChatFrame1, "EMOTE")
 	ChatFrame_AddMessageGroup(ChatFrame1, "YELL")
@@ -77,19 +84,19 @@ local function SetupChat()
 	ChatFrame_AddMessageGroup(ChatFrame1, "BN_WHISPER")
 	ChatFrame_AddMessageGroup(ChatFrame1, "BN_CONVERSATION")
 	ChatFrame_AddMessageGroup(ChatFrame1, "BN_INLINE_TOAST_ALERT")
-	
 
-	ChatFrame_RemoveAllMessageGroups(ChatFrame3)	
-	ChatFrame_AddMessageGroup(ChatFrame3, "COMBAT_FACTION_CHANGE")
-	ChatFrame_AddMessageGroup(ChatFrame3, "SKILL")
-	ChatFrame_AddMessageGroup(ChatFrame3, "LOOT")
-	ChatFrame_AddMessageGroup(ChatFrame3, "MONEY")
-	ChatFrame_AddMessageGroup(ChatFrame3, "COMBAT_XP_GAIN")
-	ChatFrame_AddMessageGroup(ChatFrame3, "COMBAT_HONOR_GAIN")
-	ChatFrame_AddMessageGroup(ChatFrame3, "COMBAT_GUILD_XP_GAIN")
-	ChatFrame_AddChannel(ChatFrame1, GENERAL)
-	ChatFrame_RemoveChannel(ChatFrame1, L['Trade'])
+	ChatFrame_RemoveAllMessageGroups(ChatFrame3)
+	ChatFrame_AddChannel(ChatFrame3, GENERAL)
 	ChatFrame_AddChannel(ChatFrame3, L['Trade'])
+
+	ChatFrame_RemoveAllMessageGroups(ChatFrame4)	
+	ChatFrame_AddMessageGroup(ChatFrame4, "COMBAT_FACTION_CHANGE")
+	ChatFrame_AddMessageGroup(ChatFrame4, "SKILL")
+	ChatFrame_AddMessageGroup(ChatFrame4, "LOOT")
+	ChatFrame_AddMessageGroup(ChatFrame4, "MONEY")
+	ChatFrame_AddMessageGroup(ChatFrame4, "COMBAT_XP_GAIN")
+	ChatFrame_AddMessageGroup(ChatFrame4, "COMBAT_HONOR_GAIN")
+	ChatFrame_AddMessageGroup(ChatFrame4, "COMBAT_GUILD_XP_GAIN")
 
 	
 	if E.myname == "Elvz" then
