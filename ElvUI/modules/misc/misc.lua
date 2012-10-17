@@ -3,7 +3,7 @@ local M = E:NewModule('Misc', 'AceEvent-3.0', 'AceTimer-3.0');
 
 E.Misc = M;
 
-UIErrorsFrame:RegisterEvent('UI_ERROR_MESSAGE')
+UIErrorsFrame:UnregisterEvent('UI_ERROR_MESSAGE')
 
 function M:COMBAT_LOG_EVENT_UNFILTERED(_, _, event, _, sourceGUID, _, _, _, _, destName, _, _, _, _, _, spellID, spellName)
 	if not (event == "SPELL_INTERRUPT" and sourceGUID == UnitGUID('player')) then return end
