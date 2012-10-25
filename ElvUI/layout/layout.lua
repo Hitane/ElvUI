@@ -344,5 +344,4 @@ function LO:CreateMinimapPanels()
 	end)
 end
 
->>>>>>> origin/master
 E:RegisterModule(LO:GetName())
