@@ -67,6 +67,11 @@ local function LoadSkin()
 		icon:SetTexCoord(unpack(E.TexCoords))
 		icon:SetInside()
 	end
+	
+	SideDressUpFrame:StripTextures()
+	SideDressUpFrame:SetTemplate("Transparent")
+	S:HandleCloseButton(SideDressUpModelCloseButton)
+	S:HandleButton(SideDressUpModelResetButton)
 end
 
 S:RegisterSkin("Blizzard_VoidStorageUI", LoadSkin)
