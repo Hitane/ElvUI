@@ -96,6 +96,7 @@ local function LoadSkin()
 	
 	S:HandleScrollBar(GuildBankTransactionsScrollFrameScrollBar)
 	S:HandleScrollBar(GuildBankInfoScrollFrameScrollBar)
+	S:HandleScrollBar(GuildBankPopupScrollFrameScrollBar)
 end
 
 S:RegisterSkin("Blizzard_GuildBankUI", LoadSkin)

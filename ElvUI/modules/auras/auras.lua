@@ -46,7 +46,7 @@ function A:UpdateWeapon(button)
 		button.backdrop = CreateFrame('Frame', nil, button)
 		button.backdrop:SetAllPoints()
 		button.backdrop:SetTemplate('Default', nil, true)
-		button.backdrop:SetBackdropBorderColor(137/255, 0, 191/255)
+		--button.backdrop:SetBackdropBorderColor(137/255, 0, 191/255)
 		button.backdrop:SetFrameLevel(button:GetFrameLevel() - 2)
 		
 		button.time = _G[button:GetName()..'Duration']

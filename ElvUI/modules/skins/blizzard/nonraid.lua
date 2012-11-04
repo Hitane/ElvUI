@@ -44,6 +44,7 @@ local function LoadSkin()
 	
 	S:HandleButton(RaidFrameRaidBrowserButton)
 	S:HandleCheckBox(RaidFrameAllAssistCheckButton)	
+	S:HandleScrollBar(RaidInfoScrollFrameScrollBar)
 end
 
 S:RegisterSkin('ElvUI', LoadSkin)
