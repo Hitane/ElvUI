@@ -167,7 +167,9 @@ function E:UpdateMedia()
 		border = RAID_CLASS_COLORS[E.myclass]
 		E.db['general'].bordercolor.r = RAID_CLASS_COLORS[E.myclass].r
 		E.db['general'].bordercolor.g = RAID_CLASS_COLORS[E.myclass].g
-		E.db['general'].bordercolor.b = RAID_CLASS_COLORS[E.myclass].b		
+		E.db['general'].bordercolor.b = RAID_CLASS_COLORS[E.myclass].b
+	elseif E.PixelMode then
+		border = {r = 0, g = 0, b = 0}
 	end
 	self["media"].bordercolor = {border.r, border.g, border.b}
 
@@ -783,7 +785,10 @@ function E:DBConversions()
 		self.db.theme = nil;
 	end	
 	
-	if self.private.install_complete and (self.private.theme ~= 'pixelPerfect' and self.private.theme ~= nil) then
+	
+	if self.private.theme == 'pixelPerfect' then
+		self.private.general.pixelPerfect = true;
+	elseif self.private.install_complete and (self.private.theme ~= 'pixelPerfect' and self.private.theme ~= nil) then
 		self.private.general.pixelPerfect = false;
 	end
 end
