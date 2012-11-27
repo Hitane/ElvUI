@@ -368,7 +368,7 @@ function A:Construct_ConsolidatedBuffs()
 	local frame = CreateFrame('Frame', 'ElvUI_ConsolidatedBuffs', Minimap)
 	frame:SetTemplate('Default')
 	frame:Width(E.ConsolidatedBuffsWidth)
-	frame:Point('TOPLEFT', Minimap.backdrop, 'TOPRIGHT', (E.PixelMode and -1 or 1), 0)
+	frame:Point('TOPLEFT', Minimap.backdrop, 'TOPRIGHT', (E.PixelMode and 2 or 1), 0)
 	frame:Point('BOTTOMLEFT', Minimap.backdrop, 'BOTTOMRIGHT', (E.PixelMode and -1 or 1), 0)
 	self.frame = frame
 	
