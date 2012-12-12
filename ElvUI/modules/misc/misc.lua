@@ -182,5 +182,4 @@ function M:Initialize()
 	self.MovingTimer = self:ScheduleRepeatingTimer("CheckMovement", 0.1)
 end
 
->>>>>>> upstream/master
 E:RegisterModule(M:GetName())
