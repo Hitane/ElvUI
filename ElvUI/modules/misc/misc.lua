@@ -2,23 +2,30 @@ local E, L, V, P, G, _ = unpack(select(2, ...)); --Inport: Engine, Locales, Priv
 local M = E:NewModule('Misc', 'AceEvent-3.0', 'AceTimer-3.0');
 
 E.Misc = M;
+local UIErrorsFrame = UIErrorsFrame;
 
-UIErrorsFrame:UnregisterEvent('UI_ERROR_MESSAGE')
+function M:ErrorFrameToggle(event)
+	if event == 'PLAYER_REGEN_DISABLED' then
+		UIErrorsFrame:UnregisterEvent('UI_ERROR_MESSAGE')
+	else
+		UIErrorsFrame:RegisterEvent('UI_ERROR_MESSAGE')
+	end
+end
 
 function M:COMBAT_LOG_EVENT_UNFILTERED(_, _, event, _, sourceGUID, _, _, _, _, destName, _, _, _, _, _, spellID, spellName)
 	if not (event == "SPELL_INTERRUPT" and sourceGUID == UnitGUID('player')) then return end
 	
 	local inGroup, inRaid = IsInGroup(), IsInRaid()
 	if E.db.general.interruptAnnounce == "PARTY" and inGroup then
-		SendChatMessage(INTERRUPTED.." "..destName.."'s \124cff71d5ff\124Hspell:"..spellID.."\124h["..spellName.."]\124h\124r!", "PARTY", nil, nil)
+		SendChatMessage(INTERRUPTED.." "..destName.."'s \124cff71d5ff\124Hspell:"..spellID.."\124h["..spellName.."]\124h\124r!", IsPartyLFG() and "INSTANCE_CHAT" or "PARTY")
 	elseif E.db.general.interruptAnnounce == "RAID" and inGroup then
 		if inRaid then
-			SendChatMessage(INTERRUPTED.." "..destName.."'s \124cff71d5ff\124Hspell:"..spellID.."\124h["..spellName.."]\124h\124r!", "RAID", nil, nil)		
+			SendChatMessage(INTERRUPTED.." "..destName.."'s \124cff71d5ff\124Hspell:"..spellID.."\124h["..spellName.."]\124h\124r!", IsPartyLFG() and "INSTANCE_CHAT" or "RAID")		
 		else
-			SendChatMessage(INTERRUPTED.." "..destName.."'s \124cff71d5ff\124Hspell:"..spellID.."\124h["..spellName.."]\124h\124r!", "PARTY", nil, nil)
+			SendChatMessage(INTERRUPTED.." "..destName.."'s \124cff71d5ff\124Hspell:"..spellID.."\124h["..spellName.."]\124h\124r!", IsPartyLFG() and "INSTANCE_CHAT" or "PARTY")
 		end	
 	elseif E.db.general.interruptAnnounce == "SAY" and inGroup then
-		SendChatMessage(INTERRUPTED.." "..destName.."'s \124cff71d5ff\124Hspell:"..spellID.."\124h["..spellName.."]\124h\124r!", "SAY", nil, nil)	
+		SendChatMessage(INTERRUPTED.." "..destName.."'s \124cff71d5ff\124Hspell:"..spellID.."\124h["..spellName.."]\124h\124r!", "SAY")	
 	end
 end
 
@@ -161,6 +168,8 @@ function M:Initialize()
 	self:LoadLootRoll()
 	self:LoadChatBubbles()
 	self:RegisterEvent('MERCHANT_SHOW')
+	self:RegisterEvent('PLAYER_REGEN_DISABLED', 'ErrorFrameToggle')
+	self:RegisterEvent('PLAYER_REGEN_ENABLED', 'ErrorFrameToggle')
 	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	self:RegisterEvent('CHAT_MSG_BG_SYSTEM_HORDE', 'PVPMessageEnhancement')
 	self:RegisterEvent('CHAT_MSG_BG_SYSTEM_ALLIANCE', 'PVPMessageEnhancement')
@@ -173,4 +182,5 @@ function M:Initialize()
 	self.MovingTimer = self:ScheduleRepeatingTimer("CheckMovement", 0.1)
 end
 
+>>>>>>> upstream/master
 E:RegisterModule(M:GetName())
