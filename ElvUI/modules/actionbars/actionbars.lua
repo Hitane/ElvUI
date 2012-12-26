@@ -257,7 +257,12 @@ function AB:CreateVehicleLeave()
 	RegisterStateDriver(vehicle, "visibility", "[vehicleui] show;[target=vehicle,exists] show;hide")
 end
 
-function AB:ReassignBindings()
+function AB:ReassignBindings(event)
+	if event == "UPDATE_BINDINGS" then
+		self:UpdatePetBindings();
+		self:UpdateStanceBindings();
+	end
+
 	if InCombatLockdown() then return end	
 	for _, bar in pairs(self["handledBars"]) do
 		if not bar then return end
@@ -334,13 +339,14 @@ function AB:UpdateButtonSettings()
 			self["handledbuttons"][button] = nil
 		end
 	end
-
+	
 	for i=1, 5 do
 		self:PositionAndSizeBar('bar'..i)
 	end	
 	self:PositionAndSizeBarPet()
 	self:PositionAndSizeBarShapeShift()
-		
+	self:UpdatePetBindings()	
+	self:UpdateStanceBindings()
 	for barName, bar in pairs(self["handledBars"]) do
 		self:UpdateButtonConfig(bar, bar.bindButtons)
 	end
