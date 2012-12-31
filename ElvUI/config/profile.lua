@@ -88,6 +88,7 @@ P["nameplate"] = {
 	['auraFont'] = 'ElvUI Pixel',
 	['auraFontSize'] = 7,
 	['auraFontOutline'] = 'MONOCHROMEOUTLINE',
+	["smallPlates"] = true,
 	
 	["classIcons"] = true,
 	["markBGHealers"] = true,
@@ -202,7 +203,7 @@ P['datatexts'] = {
 			['left'] = 'System',
 			['middle'] = 'Time',	
 			['right'] = 'Gold',
-		},			
+		},
 		['LeftMiniPanel'] = 'Guild',
 		['RightMiniPanel'] = 'Friends',
 	},
