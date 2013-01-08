@@ -14,7 +14,6 @@ end
 function LO:Initialize()
 	self:CreateChatPanels()
 	self:CreateMinimapPanels()
-	self:CreatePatsPanels()
 	
 	
 	self.BottomPanel = CreateFrame('Frame', 'ElvUI_BottomPanel', E.UIParent)
@@ -353,48 +352,6 @@ function LO:CreateMinimapPanels()
 	configtoggle:SetScript('OnLeave', function(self)
 		GameTooltip:Hide()
 	end)
-end
-
-function LO:CreatePatsPanels()
-	--Left Data Panel
-	local ldp = CreateFrame('Frame', 'LeftDataPanel', E.UIParent)
-	ldp:SetPoint("BOTTOMRIGHT", E.UIParent, "BOTTOM", -12, 3)
-	ldp:SetSize(345, 18)
-	ldp:SetTemplate('Default', true)
-	
-	E:GetModule('DataTexts'):RegisterPanel(ldp, 3, 'ANCHOR_TOPLEFT', -17, 4)
-	
-	--Right Data Panel
-	local rdp = CreateFrame('Frame', 'RightDataPanel', E.UIParent)
-	rdp:SetPoint('BOTTOMLEFT', E.UIParent, 'BOTTOM', 12, 3)
-	rdp:SetSize(345, 18)
-	rdp:SetTemplate('Default', true)
-	
-	E:GetModule('DataTexts'):RegisterPanel(rdp, 3, 'ANCHOR_TOPLEFT', -17, 4)
-	
-	-- HORIZONTAL LINE LEFT
-	local hll = CreateFrame('Frame', 'HorizontalLineLeft', E.UIParent)
-	hll:Size(10, 2)
-	hll:SetPoint('RIGHT', ldp, 'LEFT', 0, 0)
-	hll:SetTemplate('Default', true)
-
-	-- HORIZONTAL LINE RIGHT
-	local hlr = CreateFrame('Frame', 'HorizontalLineRight', E.UIParent)
-	hlr:Size(10, 2)
-	hlr:SetPoint('LEFT', rdp, 'RIGHT', 0, 0)
-	hlr:SetTemplate('Default', true)
-
-	-- LEFT VERTICAL LINE
-	local leftvl = CreateFrame('Frame', 'VerticalLineLeft', E.UIParent)
-	leftvl:Size(2, 13)
-	leftvl:SetPoint('BOTTOM', hll, 'LEFT', 0, -1)
-	leftvl:SetTemplate('Default', true)
-
-	-- RIGHT VERTICAL LINE
-	local rightvl = CreateFrame('Frame', 'VerticalLineRight', E.UIParent)
-	rightvl:Size(2, 13)
-	rightvl:SetPoint('BOTTOM', hlr, 'RIGHT', 0, -1)
-	rightvl:SetTemplate('Default', true)
 end
 
 E:RegisterModule(LO:GetName())

@@ -194,16 +194,6 @@ P['datatexts'] = {
 			['middle'] = 'Time',	
 			['right'] = 'Gold',
 		},
-		['LeftDataPanel'] = {
-			['left'] = 'Armor',
-			['middle'] = 'Durability',
-			['right'] = 'Avoidance',
-		},
-		['RightDataPanel'] = {
-			['left'] = 'System',
-			['middle'] = 'Time',	
-			['right'] = 'Gold',
-		},
 		['LeftMiniPanel'] = 'Guild',
 		['RightMiniPanel'] = 'Friends',
 	},
