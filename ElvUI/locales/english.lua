@@ -542,6 +542,12 @@ L["Watch Frame"] = true;
 L["Weapons"] = true;
 
 --NamePlates
+L["Tagged Color"] = true;
+L["Color of a nameplate that is tagged by another person."] = true;
+L["Tanked/Loose Color"] = true;
+L["Depending on your role. If you are a tank then its the color of mobs being tanked not by you by an actual tank. If you are not a tank then it is the color of mobs that are not currently being tanked."] = true;
+L["Color Tanked/Loose"] = true;
+L["Depending on your role. If you are a tank then it will color mobs being tanked by the offtank. If you are not a tank then it will color mobs not being tanked. This is not 100% accurate and should only be used as a referance."] = true;
 L["Add Name"] = true;
 L["Adjust nameplate size on smaller mobs to scale down. This will only adjust the health bar width not the actual nameplate hitbox you click on."] = true;
 L["All"] = true;

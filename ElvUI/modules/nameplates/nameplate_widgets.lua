@@ -1,12 +1,24 @@
 local E, L, V, P, G, _ = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB, Localize Underscore
 local NP = E:GetModule('NamePlates')
-
+_G["NP"] = NP
 --[[
 	This file handles functions for the Castbar and Debuff modules of nameplates.
 ]]
+
+NP.GroupTanks = {};
 NP.GroupMembers = {};
 NP.CachedAuraDurations = {};
 NP.AurasCache = {}
+
+NP.TankClasses = {
+	['WARRIOR'] = true,
+	['PALADIN'] = true,
+	['MONK'] = true,
+	['DEATHKNIGHT'] = true,
+	['DRUID'] = true,
+	--['PRIEST'] = true -- temp
+}
+
 NP.RaidTargetReference = {
 	["STAR"] = 0x00000001,
 	["CIRCLE"] = 0x00000002,
@@ -27,6 +39,26 @@ NP.ComboColors = {
 	[4] = {0.65, 0.63, 0.35},
 	[5] = {0.33, 0.59, 0.33}
 }
+
+NP.RaidIconCoordinate = {
+	[0]		= { [0]		= "STAR", [0.25]	= "MOON", },
+	[0.25]	= { [0]		= "CIRCLE", [0.25]	= "SQUARE",	},
+	[0.5]	= { [0]		= "DIAMOND", [0.25]	= "CROSS", },
+	[0.75]	= { [0]		= "TRIANGLE", [0.25]	= "SKULL", }, 
+}
+
+NP.TargetOfGroupMembers = {}
+NP.ByRaidIcon = {}			-- Raid Icon to GUID 		-- ex.  ByRaidIcon["SKULL"] = GUID
+NP.ByName = {}				-- Name to GUID (PVP)
+NP.Aura_List = {}	-- Two Dimensional
+NP.Aura_Spellid = {}
+NP.Aura_Expiration = {}
+NP.Aura_Stacks = {}
+NP.Aura_Caster = {}
+NP.Aura_Duration = {}
+NP.Aura_Texture = {}
+NP.Aura_Type = {}
+NP.Aura_Target = {}
 
 local AURA_TYPE_BUFF = 1
 local AURA_TYPE_DEBUFF = 6
@@ -49,13 +81,6 @@ local band = bit.band
 local ceil = math.ceil
 local twipe = table.wipe
 
-NP.RaidIconCoordinate = {
-	[0]		= { [0]		= "STAR", [0.25]	= "MOON", },
-	[0.25]	= { [0]		= "CIRCLE", [0.25]	= "SQUARE",	},
-	[0.5]	= { [0]		= "DIAMOND", [0.25]	= "CROSS", },
-	[0.75]	= { [0]		= "TRIANGLE", [0.25]	= "SKULL", }, 
-}
-
 local RaidIconIndex = {
 	"STAR",
 	"CIRCLE",
@@ -66,19 +91,6 @@ local RaidIconIndex = {
 	"CROSS",
 	"SKULL",
 }
-
-NP.TargetOfGroupMembers = {}
-NP.ByRaidIcon = {}			-- Raid Icon to GUID 		-- ex.  ByRaidIcon["SKULL"] = GUID
-NP.ByName = {}				-- Name to GUID (PVP)
-NP.Aura_List = {}	-- Two Dimensional
-NP.Aura_Spellid = {}
-NP.Aura_Expiration = {}
-NP.Aura_Stacks = {}
-NP.Aura_Caster = {}
-NP.Aura_Duration = {}
-NP.Aura_Texture = {}
-NP.Aura_Type = {}
-NP.Aura_Target = {}
 
 do
 	local PolledHideIn
@@ -391,6 +403,26 @@ function NP:UpdateAuraByLookup(guid)
 	end
 end
 
+function NP:UpdateIsBeingTanked(frame)
+	local guid = frame.guid
+	if not guid then return end
+	
+	local unit = self.TargetOfGroupMembers[guid]
+ 	if unit then
+		local targetUnit = unit.."target"
+		if UnitExists(targetUnit) then
+			local isTankGUID = self.GroupTanks[UnitGUID(targetUnit)]
+			local isTanking = UnitDetailedThreatSituation(targetUnit, unit)
+
+			if isTankGUID and isTanking then
+				frame.isBeingTanked = true
+			elseif not isTankGUID and isTanking then
+				frame.isBeingTanked = nil
+			end
+		end
+	end
+end
+
 function NP:InvalidCastCheck(frame)
 	if frame.guid and self.GUIDIgnoreCast[frame.guid] then
 		self.GUIDIgnoreCast[frame.guid] = nil;
@@ -594,32 +626,56 @@ function NP:CleanAuraLists()
 	end
 end
 
+function NP:AddToRoster(unitId)
+	local unitName = UnitName(unitId)
+
+	if unitName then
+		local _, unitClass = UnitClass(unitId)
+		local guid = UnitGUID(unitId)
+		self.GroupMembers[unitName] = unitId
+		
+		if ((UnitGroupRolesAssigned(unitId) == 'TANK') or GetPartyAssignment("MAINTANK", unitId)) and self.TankClasses[unitClass] then
+			self.GroupTanks[guid] = true
+		end		
+	end
+end
+
 function NP:UpdateRoster()
 	local groupType, groupSize, unitId, unitName
+	wipe(self.GroupMembers)
+	wipe(self.GroupTanks)	
+	
 	if IsInRaid() then 
 		groupType = "raid"
-		groupSize = GetNumGroupMembers() - 1
+		groupSize = GetNumGroupMembers()
 	elseif IsInGroup() then 
 		groupType = "party"
-		groupSize = GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) 
+		groupSize = GetNumGroupMembers() - 1
 	else 
 		groupType = "solo"
 		groupSize = 1
 	end
-	
-	wipe(self.GroupMembers)
-	
+
 	-- Cycle through Group
 	if groupType then
 		for index = 1, groupSize do
-			unitId = groupType..index	
-			unitName = UnitName(unitId)
-			if unitName then
-				self.GroupMembers[unitName] = unitId
-			end
+			self:AddToRoster(groupType..index)
 		end
-	end	
+	end
+	
+	if UnitExists('pet') then
+		self:AddToRoster('pet')
+		
+		if groupType ~= "raid" then
+			self.GroupTanks[UnitGUID('pet')] = true
+		end
+	end
+	
+	if groupType == 'party' then
+		self:AddToRoster('player')
+	end
 end
+
 
 function NP:WipeAuraList(guid)
 	if guid and self.Aura_List[guid] then
@@ -677,7 +733,7 @@ function NP:UpdateIcon(frame, texture, expiration, stacks)
 end
 
 function NP:UpdateIconGrid(frame, guid)
-	local widget = frame.AuraWidget
+	local widget = frame.AuraWidget 
 	local AuraIconFrames = widget.AuraIconFrames
 	local AurasOnUnit = self:GetAuraList(guid)
 	local AuraSlotIndex = 1
@@ -784,11 +840,11 @@ function NP:UpdateAurasByUnitID(unit)
 	end
 end
 
-function NP:UNIT_TARGET()
+function NP:UNIT_TARGET(event, unit)	
 	self.TargetOfGroupMembers = wipe(self.TargetOfGroupMembers)
 	
 	for name, unitid in pairs(self.GroupMembers) do
-		local targetOf = unitid..("target" or "")
+		local targetOf = unitid.."target"
 		if UnitExists(targetOf) then
 			self.TargetOfGroupMembers[UnitGUID(targetOf)] = targetOf
 		end
@@ -918,12 +974,7 @@ function NP:UpdateCPoints(frame, isMouseover)
 	if isMouseover == true then
 		unit = "mouseover"
 	end
-	
-	--[[if not UnitExists(unit) then 
-		self:ForEachPlate(self.HideCPoints)
-		return; 
-	end]]
-	
+
 	if type(frame) ~= "table" then
 		frame = self:GetTargetNameplate()
 		if frame then
