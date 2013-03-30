@@ -1,4 +1,4 @@
-﻿local E, L, V, P, G, _ = unpack(ElvUI); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB, Localize Underscore
+﻿local E, L, V, P, G = unpack(ElvUI); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 
 local tsort, tinsert = table.sort, table.insert
 local DEFAULT_WIDTH = 890;
@@ -6,7 +6,6 @@ local DEFAULT_HEIGHT = 651;
 local AC = LibStub("AceConfig-3.0")
 local ACD = LibStub("AceConfigDialog-3.0")
 local ACR = LibStub("AceConfigRegistry-3.0")
-local LibDualSpec = LibStub('LibDualSpec-1.0')
 
 AC:RegisterOptionsTable("ElvUI", E.Options)
 ACD:SetDefaultSize("ElvUI", DEFAULT_WIDTH, DEFAULT_HEIGHT)	
@@ -111,14 +110,27 @@ E.Options.args.general = {
 					isPercent = true,
 					min = 0, max = 1, step = 0.01,
 				},		
-				autoAcceptInvite = {
+				chatBubbles = {
 					order = 5,
+					type = "select",
+					name = L['Chat Bubbles Style'],
+					desc = L['Skin the blizzard chat bubbles.'],
+					get = function(info) return E.private.general.chatBubbles end,
+					set = function(info, value) E.private.general.chatBubbles = value; E:StaticPopup_Show("PRIVATE_RL") end,
+					values = {
+						['backdrop'] = L['Skin Backdrop'],
+						['nobackdrop'] = L['Remove Backdrop'],
+						['disabled'] = L['Disabled']
+					}
+				},					
+				autoAcceptInvite = {
+					order = 6,
 					name = L['Accept Invites'],
 					desc = L['Automatically accept invites from guild/friends.'],
 					type = 'toggle',
 				},
 				vendorGrays = {
-					order = 6,
+					order = 7,
 					name = L['Vendor Grays'],
 					desc = L['Automatically vendor gray items when visiting a vendor.'],
 					type = 'toggle',				
@@ -154,15 +166,12 @@ E.Options.args.general = {
 					get = function(info) return E.global.general.autoScale end,
 					set = function(info, value) E.global.general[ info[#info] ] = value; E:StaticPopup_Show("GLOBAL_RL") end
 				},	
-
-				bubbles = {
+				hideErrorFrame = {
 					order = 12,
-					type = "toggle",
-					name = L['Chat Bubbles'],
-					desc = L['Skin the blizzard chat bubbles.'],
-					get = function(info) return E.private.general.bubbles end,
-					set = function(info, value) E.private.general.bubbles = value; E:StaticPopup_Show("PRIVATE_RL") end
-				},	
+					name = L["Hide Error Text"],
+					desc = L["Hides the red error text at the top of the screen while in combat."],
+					type = "toggle"
+				},
 				taintLog = {
 					order = 13,
 					type = "toggle",
@@ -702,8 +711,7 @@ E.Options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(E.data);
 AC:RegisterOptionsTable("ElvProfiles", E.Options.args.profiles)
 E.Options.args.profiles.order = -10
 
-LibDualSpec:EnhanceDatabase(E.data, "ElvUI")
-LibDualSpec:EnhanceOptions(E.Options.args.profiles, E.data)
+LibStub('LibDualSpec-1.0'):EnhanceOptions(E.Options.args.profiles, E.data)
 
 if not E.Options.args.profiles.plugins then
 	E.Options.args.profiles.plugins = {}
