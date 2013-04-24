@@ -395,13 +395,17 @@ function E:CheckIncompatible()
 	if E.global.ignoreIncompatible then return; end
 	if IsAddOnLoaded('Prat-3.0') and E.private.chat.enable then
 		E:IncompatibleAddOn('Prat-3.0', 'Chat')
-	elseif IsAddOnLoaded('Chatter') and E.private.chat.enable then
+	end
+
+	if IsAddOnLoaded('Chatter') and E.private.chat.enable then
 		E:IncompatibleAddOn('Chatter', 'Chat')
 	end
 	
 	if IsAddOnLoaded('TidyPlates') and E.private.nameplate.enable then
 		E:IncompatibleAddOn('TidyPlates', 'NamePlate')
-	elseif IsAddOnLoaded('Aloft') and E.private.nameplate.enable then
+	end
+		
+	if IsAddOnLoaded('Aloft') and E.private.nameplate.enable then
 		E:IncompatibleAddOn('Aloft', 'NamePlate')
 	end	
 end
@@ -579,13 +583,17 @@ function E:RemoveNonPetBattleFrames()
 	for object, _ in pairs(E.FrameLocks) do
 		_G[object]:SetParent(E.HiddenFrame)
 	end
+
+	self:RegisterEvent("PLAYER_REGEN_DISABLED", "AddNonPetBattleFrames")
 end
 
-function E:AddNonPetBattleFrames()
+function E:AddNonPetBattleFrames(event)
 	if InCombatLockdown() then return end
 	for object, _ in pairs(E.FrameLocks) do
 		_G[object]:SetParent(UIParent)
 	end
+
+	self:UnregisterEvent("PLAYER_REGEN_DISABLED")
 end
 
 function E:ResetAllUI()
